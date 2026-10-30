@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
+/* Brand colours sampled from the TIPA letterhead logo; navy is a deeper step of the brand blue for ink on green. */
+@theme {
+  --color-blue: #0f51a3;
+  --color-green: #2fb44b;
+  --color-navy: #0a2a55;
+  --color-paper: #ffffff;
+
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --m: 16px;
+  --seam: 46%;
+  /* Sized so "UNDER CONSTRUCTION" stays on one line inside the margins at every width. */
+  --step-display: 7.6vw;
+  --step-lead: 18px;
+  --step-small: 14px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 768px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --m: 28px;
+    --seam: 50%;
+    --step-display: min(8vw, 140px);
+    --step-lead: 20px;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-blue);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-green);
+  color: var(--color-navy);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-green);
+  outline-offset: 3px;
+}
+
+.display {
+  font-size: var(--step-display);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+
+/* Pressable feedback. */
+.press {
+  transition: transform 160ms var(--ease-out-strong), background-color 200ms ease, color 200ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* Each headline line rises from behind its own baseline. CSS, so it runs without JS and off the main thread. */
+.mask-line {
+  display: block;
+  overflow: hidden;
+}
+.mask-line > span {
+  display: block;
+  animation: rise 900ms var(--ease-out-strong) both;
+}
+.mask-line + .mask-line > span {
+  animation-delay: 110ms;
+}
+.hero-after {
+  animation: fade-up 600ms var(--ease-out-strong) 450ms both;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-line > span,
+  .hero-after {
+    animation: none;
+  }
 }
